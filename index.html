@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        div.row div{
+            height: 30px;
+            width: 30px;
+            display: inline-block;
+        }
+        div.wall{
+            background-color: blue;
+        }
+        div.space{
+            background-color: purple;
+        }
+        div.hero{
+            background-color: red;
+        }
+        div.bullet{
+            background-color: white;
+        }
+        div.invader{
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div id="world">
+    </div>
+    <script>
+        var world = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,3,0,3,0,3,0,3,0,3,0,0,1],
+            [1,0,3,0,3,0,3,0,3,0,3,0,0,0,1],
+            [1,0,0,3,0,3,0,3,0,3,0,3,0,0,1],
+            [1,0,3,0,3,0,3,0,3,0,3,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+        var place = {'x': 7, 'y': 9};
+        var enemies = 20;
+        function newGame(){
+            world = [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,3,0,3,0,3,0,3,0,3,0,0,1],
+                [1,0,3,0,3,0,3,0,3,0,3,0,0,0,1],
+                [1,0,0,3,0,3,0,3,0,3,0,3,0,0,1],
+                [1,0,3,0,3,0,3,0,3,0,3,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ];
+            place = {'x': 7, 'y': 9};
+            enemies = 20;
+        }
+        function displayWorld(){
+            if(enemies == 0){
+                alert('Waow! Good Job!');
+                newGame();
+            }
+            var output = '';
+            for (var i = 0; i < world.length; i++){
+                output += '<div class="row">\n'
+                for (var j = 0; j < world[i].length; j++){
+                    if (world[i][j]== 1){
+                        output += '<div class="wall"></div>\n'
+                    }
+                    else if (world[i][j]== 0){
+                        output += '<div class="space"></div>\n'
+                    }
+                    else if (world[i][j]== 2){
+                        output += '<div class="hero"></div>\n'
+                    }
+                    else if (world[i][j]== 3){
+                        output += '<div class="invader"></div>\n'
+                    }
+                    else if (world[i][j]== 4){
+                        output += '<div class="bullet"></div>\n'
+                    }
+                }
+                output += '</div>\n'
+            }
+            document.getElementById('world').innerHTML = output;
+        }
+        var shoot = setInterval(moveBull, 100);
+        function moveBull(){
+            for(var i = 1; i< world.length; i ++){
+                for(var j = 1; j< world[i].length; j ++){
+                    if (world[i][j] == 4){
+                        if (world[i -1][j] == 0 ||world[i -1][j] == 4 ){
+                            world[i -1][j] = 4;
+                            world[i][j] = 0;
+                        }
+                        else if(world[i -1][j] == 3){
+                            world[i -1][j] = 0;
+                            world[i][j] = 0;
+                            enemies --
+                        }
+                        else{
+                            world[i][j] = 0;
+                        }
+                    }
+                }
+                
+            }
+            displayWorld();
+        }
+        var direction = 1; //right
+        var invade = setInterval(moveEnemies, 1000);
+        function moveDown(){
+            for(var i = 1; i< world.length; i ++){
+                for(var j = 1; j< world[i].length; j ++){
+                    if (world[i][j] == 3){
+                        if (world[i + 1][j] == 0){
+                            world[i +1][j] = 3;
+                            world[i][j] = 0;
+                            i++;
+                        }
+                        else if(world[i +1][j] == 4){
+                            world[i +1][j] = 0;
+                            world[i][j] = 0;
+                            enemies --
+                        }
+                        // else{
+                        //     alert('HAHAHA')
+                        // }
+                    }
+                }
+                
+            }
+            displayWorld();
+        }
+        
+        function moveEnemies(){
+            if(direction == 1){
+                for(var i = 1; i< world.length; i ++){
+                    for(var j = 1; j< world[i].length; j ++){
+                        if (world[i][j] == 3){
+                            if (world[i][j + 1] == 0 ){
+                                world[i][j + 1] = 3;
+                                world[i][j] = 0;
+                                j++;
+                                
+                            }
+                            else if(world[i][j+1] == 4){
+                                world[i][j+1] = 0;
+                                world[i][j] = 0;
+                                enemies --
+                            }
+                            else if(world[i][j+1] == 1){
+                                // moveDown();
+                                direction = 0;
+                            }
+                        }
+                    }
+                
+                }
+            }
+            if(direction == 0){
+                for(var i = 1; i< world.length; i ++){
+                    for(var j = 1; j< world[i].length; j ++){
+                        if (world[i][j] == 3){
+                            if (world[i][j - 1] == 0 ){
+                                world[i][j - 1] = 3;
+                                world[i][j] = 0;
+                            }
+                            else if(world[i][j-1] == 4){
+                                world[i][j+1] = 0;
+                                world[i][j] = 0;
+                                enemies --
+                            }
+                            else if(world[i][j-1] == 1){
+                                // moveDown();
+                                direction = 1;
+                            }
+                        }
+                    }
+                
+                }
+            }
+        displayWorld();
+        }
+        
+        document.onkeydown = function(e){
+            if (e.keyCode == 37){
+                if(world[place['y']][place['x'] -1 ] == 0){
+                    world[place['y']][place['x'] -1 ] = 2;
+                    world[place['y']][place['x']] = 0;
+                    place['x'] --;
+                }
+
+            }
+            else if (e.keyCode == 39){
+                if(world[place['y']][place['x'] +1 ] == 0){
+                    world[place['y']][place['x'] +1 ] = 2;
+                    world[place['y']][place['x']] = 0;
+                    place['x'] ++;
+                }
+            }
+            else if (e.keyCode == 32){
+                world[place['y'] - 1 ][place['x']] = 4;
+            }
+            displayWorld();
+        }
+        displayWorld();
+    </script>
+    
+</body>
+</html>
